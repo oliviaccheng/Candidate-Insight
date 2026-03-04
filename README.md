@@ -4,7 +4,7 @@
 
 I will make this into a better README later!
 
-Note that legiscan.py still kinda sucks, which is why it's not integrated into local_news_scraper.py yet.
+Note that legiscan.py still kinda sucks, which is why it's not integrated into scrapers.py yet.
 
 
 
@@ -48,7 +48,7 @@ article =
 ## EXTRACT ARTICLE BY URL 
 
 ```
-from local_news_scraper import extract_article_from_url
+from scrapers import extract_article_from_url
 
 # extract a single article
 article = extract_article_from_url("https://www.knoxnews.com/story/...")
@@ -62,7 +62,7 @@ print(article['authors'])      # list of author names
 ## GET WBIR ARTICLES
 
 ```
-from local_news_scraper import WBIRScraper
+from scrapers import WBIRScraper
 
 wbir = WBIRScraper()
 articles = wbir.scrape_homepage(max_results=5)
@@ -95,7 +95,7 @@ for article in articles:
 I think this needs minor updates before it works. Every site is different, as I have learned, and even with newspaper3k it is not always gonna be plug-and-play.
 
 ```
-from local_news_scraper import LocalNewsScraper
+from scrapers import LocalNewsScraper
 
 class MyNewsScraper(LocalNewsScraper):
     def __init__(self):
