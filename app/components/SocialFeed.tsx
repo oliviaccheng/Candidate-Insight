@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader } from "./ui/card";
-import { MessageCircle, Heart, Share2, Twitter } from "lucide-react";
+import { MessageCircle, Heart, Share2 } from "lucide-react";
 import { Button } from "./ui/button";
+import { XIcon } from "./ui/XIcon.tsx";
 
 const posts = [
   {
@@ -40,7 +41,7 @@ export function SocialFeed() {
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="flex items-center gap-3 mb-8">
-          <Twitter className="w-8 h-8 text-blue-500" />
+          <XIcon className="w-8 h-8 text-blue-500" />
           <h2 className="text-3xl font-bold text-gray-900">Latest Updates</h2>
         </div>
         
@@ -53,7 +54,7 @@ export function SocialFeed() {
                     <h3 className="font-bold text-gray-900">{post.candidate}</h3>
                     <p className="text-sm text-gray-500">{post.handle}</p>
                   </div>
-                  <Twitter className="w-5 h-5 text-blue-500" />
+                  <XIcon className="w-5 h-5 text-blue-500" />
                 </div>
               </CardHeader>
               <CardContent>

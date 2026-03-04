@@ -23,7 +23,7 @@ const candidates = [
     party: "Democrat",
     position: "Senate Candidate",
     state: "California",
-    image: "https://images.unsplash.com/photo-1645106281521-86da01d1031d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwb2xpdGljaWFuJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcwMjQ4NTAwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Minister_Mitchell_July_20_headshot_DSC6710a.jpg/500px-Minister_Mitchell_July_20_headshot_DSC6710a.jpg",
     stats: {
       funding: "$12.4M",
       volunteers: "8,500",
@@ -67,7 +67,7 @@ const candidates = [
     party: "Independent",
     position: "Senate Candidate",
     state: "California",
-    image: "https://images.unsplash.com/photo-1645106281521-86da01d1031d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwb2xpdGljaWFuJTIwcG9ydHJhaXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcwMjQ4NTAwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "https://www.asiapacific.ca/sites/default/files/styles/staff_square_thumb/public/images/author/Emily%20Chen.jpg?itok=anTgyZIB",
     stats: {
       funding: "$5.2M",
       volunteers: "4,100",
@@ -133,14 +133,14 @@ export default function CandidateComparisonPage() {
             const candidate = candidates[index];
             return (
               <Card key={candidate.id} className="overflow-hidden">
-                <div className="h-48 overflow-hidden bg-gray-200">
+                <div className="h-60 overflow-hidden bg-gray-200">
                   <img 
                     src={candidate.image}
                     alt={candidate.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-[center_20%]"
                   />
                 </div>
-                <CardHeader className="text-center pb-4">
+                <CardHeader className="text-center pb-4 -mt-9">
                   <h2 className="text-2xl font-bold mb-2">{candidate.name}</h2>
                   <Badge className={`${getPartyColor(candidate.party)} mx-auto`}>
                     {candidate.party}

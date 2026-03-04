@@ -11,7 +11,7 @@ const candidates = [
     party: "Democrat",
     position: "Senate Candidate",
     state: "California",
-    image: "https://images.unsplash.com/photo-1645106281521-86da01d1031d",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Minister_Mitchell_July_20_headshot_DSC6710a.jpg/500px-Minister_Mitchell_July_20_headshot_DSC6710a.jpg",
     bio: "Former state legislator with 15 years of public service experience."
   },
   // ... other candidates
@@ -44,7 +44,7 @@ export function CandidateGrid() {
                     src={candidate.image} 
                     alt={candidate.name}
                     fill
-                    className="object-cover"
+                    className="object-cover object-[80%_20%]"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   />
                 </div>

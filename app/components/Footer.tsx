@@ -6,14 +6,14 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-white mb-3">About</h3>
             <p className="text-sm">
-              Candidate Insight provides comprehensive tracking and analysis of political races across the nation.
+              Candidate Insight provides comprehensive tracking and analysis of political candidates in the East TN region.
             </p>
           </div>
           
           <div>
             <h3 className="font-bold text-white mb-3">Data Sources</h3>
             <p className="text-sm">
-              Information compiled from official campaign filings, verified news sources, and public records.
+              Information compiled from official campaign filings, verified news sources, public records, and social media.
             </p>
           </div>
           
@@ -28,7 +28,7 @@ export function Footer() {
         </div>
         
         <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm">
-          <p>A website created by political engagement advocates</p>
+          <p>A website created by students to increase informed political engagement.</p>
           <p className="mt-2">© 2026 Candidate Insight. All rights reserved.</p>
         </div>
       </div>
