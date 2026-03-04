@@ -1,0 +1,24 @@
+{
+  "people_lookup": {},
+  "person_votes": {},
+  "session_people": {
+    "TN": {
+      "timestamp": "2026-02-20T17:49:35.352522",
+      "data": {
+        "status": "ERROR",
+        "alert": {
+          "message": "Invalid session id"
+        }
+      }
+    },
+    "US": {
+      "timestamp": "2026-02-20T17:51:00.576606",
+      "data": {
+        "status": "ERROR",
+        "alert": {
+          "message": "Invalid session id"
+        }
+      }
+    }
+  }
+}
