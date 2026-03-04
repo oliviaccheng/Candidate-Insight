@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# README for Local News Scraper 
+#### with some examples of how things work
 
-First, run the development server:
+I will make this into a better README later!
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Note that legiscan.py still kinda sucks, which is why it's not integrated into local_news_scraper.py yet.
+
+
+
+
+## DEPENDENCIES (I think this is all of them?)
+
+
+```pip install newspaper3k lxml lxml_html_clean requests beautifulsoup4```
+
+
+
+## ARTICLE DICT STRUCTURE
+
+
+#### standard:
+
+```
+article = 
+{
+    'title': str,              # article headline
+    'url': str,                # article URL
+    'excerpt': str,            # first 500 chars of article text
+    'date': datetime or None,  # publication date
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### when using extract_article_from_url():
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+article = 
+{
+    'title': str,              # article headline
+    'text': str,               # FULL article body (not just excerpt!)
+    'publish_date': datetime,  # publication date
+    'authors': list,           # list of author names
+    'url': str,                # article URL
+}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## EXTRACT ARTICLE BY URL 
 
-To learn more about Next.js, take a look at the following resources:
+```
+from local_news_scraper import extract_article_from_url
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# extract a single article
+article = extract_article_from_url("https://www.knoxnews.com/story/...")
+print(article['title'])
+print(article['text'])         # full article
+print(article['publish_date']) # datetime obj
+print(article['authors'])      # list of author names
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## GET WBIR ARTICLES
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+from local_news_scraper import WBIRScraper
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+wbir = WBIRScraper()
+articles = wbir.scrape_homepage(max_results=5)
+
+for article in articles:
+    print(f"• {article['title']}")
+```
+
+
+
+# MISC
+
+
+##### Get full article text from scraper
+`article_from_scraper = scraper.search_articles("keyword", max_results=1)[0]`
+
+##### Excerpts are only 500 chars - to get full text do this:
+`full_article = extract_article_from_url(article_from_scraper['url'])`
+`print(full_article['text'])  # full body text`
+
+
+##### You can search without keyword filter and then filter by hand yourself
+`all_results = scraper.search_articles("broad", filter_keyword=False)`
+`filtered = [a for a in all_results if "specific" in a['title'].lower()]`
+
+
+
+##  WIP: ADD YOUR OWN NEWS SOURCE
+
+I think this needs minor updates before it works. Every site is different, as I have learned, and even with newspaper3k it is not always gonna be plug-and-play.
+
+```
+from local_news_scraper import LocalNewsScraper
+
+class MyNewsScraper(LocalNewsScraper):
+    def __init__(self):
+        super().__init__("https://mynewssite.com")
+    
+    def search_articles(self, keyword, max_results=50):
+
+        # first find article URLs - this part is still site-specific
+        search_url = f"https://mynewssite.com/search?q={keyword}"
+        html = self.fetch_page(search_url)
+        
+        # extract URLs from search results page
+        article_urls = []
+        for link in html.find_all('a', href=True):
+            if '/article/' in link['href']:
+                article_urls.append(link['href'])
+        
+        # give URLS to newspaper3k for extraction
+        articles = []
+        for url in article_urls[:max_results]:
+            article = self._fetch_and_parse_article(url)
+            if article:
+                articles.append(article)
+        
+        return articles
+
+# use it
+scraper = MyNewsScraper()
+articles = scraper.search_articles("keyword", max_results=10)
+```
