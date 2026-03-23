@@ -20,3 +20,6 @@ Candidates have the following attributes:
 Note that this can be easily expanded should other attributes be included.
 
 Filtering will be handled by the backend.
+
+Side note: more tweets will be added later, only two files were included for ease of 
+testing
