@@ -1,5 +1,6 @@
 import psycopg2
 import getpass
+import json
 
 def main():
     # this can be made more portable by creating a database.ini file 
@@ -50,7 +51,13 @@ def update_candidate(field, new_value, name, crsr):
 
 # based off of louise's structure for the articles, we will have this
 # function make it easier to add article(s) to a candidate's profile.
-# def add_article(name, crsr):
+# should we do an array of articles or just one article?
+# def add_article(article, name, crsr):
+    # article read in as a dict, but now it is a JSON
+    # article_json = json.dumps(article)
+    # crsr.execute(f"UPDATE candidates SET article = %s WHERE name = %s", (article_json, name))
+    #crsr.execute("SELECT * FROM candidates WHERE name = %s", (name,))
+    #print(crsr.fetchone())
     
 if __name__ == "__main__":
     main()
