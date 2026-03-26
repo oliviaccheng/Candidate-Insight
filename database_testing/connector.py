@@ -27,16 +27,23 @@ def main():
     # other notes:
     # fetchone = one line, fetchall = all lines, fetchmany = # of lines.
     read_candidate("Matt Van Epps", crsr)
+    create_candidate("John Doe", "Independent", "Hennepin", "MN", "Minneapolis", "This is a bio.", crsr)
 
 # we don't want people injecting whatever, so here are functions to control database access.
-#def create_candidate():
-    
+#tbh, there is still probably a massive security risk here.
+
+# here, I will assume that bio is a text file? the rest obviously are strings
+def create_candidate(name, party, county, state, electoral_district, bio, crsr):
+    crsr.execute("INSERT INTO candidates (name, party, county, state, electoral_district, bio) VALUES (%s, %s, %s, %s, %s, %s)", (name, party, county, state, electoral_district, bio))
+    read_candidate(name, crsr)
+
 def read_candidate(name, crsr):
     crsr.execute("SELECT * FROM candidates WHERE name = %s", (name,))
     print(crsr.fetchone())
     
-#def update_candidate():
-    
+# we will search primarily by name, can I update the name using this?
+def update_candidate(field, new_value, name, crsr):
+    pass
     
 
 if __name__ == "__main__":
