@@ -42,9 +42,15 @@ def read_candidate(name, crsr):
     print(crsr.fetchone())
     
 # we will search primarily by name, can I update the name using this?
+# this has not been tested, but it should work. hopefully.
 def update_candidate(field, new_value, name, crsr):
-    pass
-    
+    crsr.execute(f"UPDATE candidates SET {field} = %s WHERE name = %s", (new_value, name))
+    crsr.execute("SELECT * FROM candidates WHERE name = %s", (name,))
+    print(crsr.fetchone())
 
+# based off of louise's structure for the articles, we will have this
+# function make it easier to add article(s) to a candidate's profile.
+# def add_article(name, crsr):
+    
 if __name__ == "__main__":
     main()
