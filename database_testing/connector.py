@@ -28,7 +28,7 @@ def main():
     # other notes:
     # fetchone = one line, fetchall = all lines, fetchmany = # of lines.
     read_candidate("Matt Van Epps", crsr)
-    create_candidate("John Doe", "Independent", "Hennepin", "MN", "Minneapolis", "This is a bio.", crsr)
+    #create_candidate("John Doe", "Independent", "Hennepin", "MN", "Minneapolis", "This is a bio.", crsr)
 
 # we don't want people injecting whatever, so here are functions to control database access.
 #tbh, there is still probably a massive security risk here.
