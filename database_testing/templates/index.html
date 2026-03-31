@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Search</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        input { padding: 8px; width: 300px; }
+        button { padding: 8px; }
+        .result { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h2>Search Users</h2>
+
+<input type="text" id="searchInput" placeholder="Enter name or email">
+<button onclick="search()">Search</button>
+
+<div id="results"></div>
+
+<script>
+async function search() {
+    const query = document.getElementById("searchInput").value.trim();
+
+    // If input is empty, show message and exit
+    if (!query) {
+        document.getElementById("results").innerHTML = "<p>Please enter a name.</p>";
+        return;
+    }
+
+    try {
+        // Fetch data from Flask backend
+        const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = ""; // Clear previous results
+
+        if (data.length === 0) {
+            resultsDiv.innerHTML = "<p>No results found.</p>";
+            return;
+        }
+
+        // Loop through results and display them
+        data.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "result";
+            div.innerHTML = `<strong>${item.name}</strong><br>${item.bio}`;
+            resultsDiv.appendChild(div);
+        });
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("results").innerHTML = "<p>Error fetching results.</p>";
+    }
+}
+</script>
+
+</body>
+</html>
