@@ -1,13 +1,13 @@
 import psycopg2
-import getpass
 import json
 
 def main():
     # this can be made more portable by creating a database.ini file 
     # and reading the connection params from there using a configparser.
     # this is for simplicity, but can be implemented later (like mid-late April)
-    p = getpass.getpass("Password: ")
-    connection = psycopg2.connect(host="localhost", port=5432,database="les_candidats", user="postgres", password=p) 
+    connection = psycopg2.connect(
+        #connection info
+    ) 
 
     crsr = connection.cursor()
     print("PostgreSQL database version: ")
@@ -27,15 +27,18 @@ def main():
 
     # other notes:
     # fetchone = one line, fetchall = all lines, fetchmany = # of lines.
-    read_candidate("Matt Van Epps", crsr)
-    #create_candidate("John Doe", "Independent", "Hennepin", "MN", "Minneapolis", "This is a bio.", crsr)
+    #read_candidate("Matt Van Epps", crsr)
+    
+    create_candidate("John Doe", "Independent", "Hennepin", "MN", "Minneapolis", "This is a bio.", "doeArticles.csv", "doeRecords.txt", "doeTweets.csv", crsr)
+    # commit the changes to the database, otherwise they won't be saved.
+    connection.commit() 
 
 # we don't want people injecting whatever, so here are functions to control database access.
 #tbh, there is still probably a massive security risk here.
 
 # here, I will assume that bio is a text file? the rest obviously are strings
-def create_candidate(name, party, county, state, electoral_district, bio, crsr):
-    crsr.execute("INSERT INTO candidates (name, party, county, state, electoral_district, bio) VALUES (%s, %s, %s, %s, %s, %s)", (name, party, county, state, electoral_district, bio))
+def create_candidate(name, party, county, state, electoral_district, bio, article_location, vrecords_location, tweets_location, crsr):
+    crsr.execute("INSERT INTO candidates (name, party, county, state, electoral_district, bio, article_location, vrecords_location, tweets_location) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (name, party, county, state, electoral_district, bio, article_location, vrecords_location, tweets_location))
     read_candidate(name, crsr)
 
 def read_candidate(name, crsr):
@@ -48,16 +51,6 @@ def update_candidate(field, new_value, name, crsr):
     crsr.execute(f"UPDATE candidates SET {field} = %s WHERE name = %s", (new_value, name))
     crsr.execute("SELECT * FROM candidates WHERE name = %s", (name,))
     print(crsr.fetchone())
-
-# based off of louise's structure for the articles, we will have this
-# function make it easier to add article(s) to a candidate's profile.
-# should we do an array of articles or just one article?
-# def add_article(article, name, crsr):
-    # article read in as a dict, but now it is a JSON
-    # article_json = json.dumps(article)
-    # crsr.execute(f"UPDATE candidates SET article = %s WHERE name = %s", (article_json, name))
-    #crsr.execute("SELECT * FROM candidates WHERE name = %s", (name,))
-    #print(crsr.fetchone())
     
 if __name__ == "__main__":
     main()
