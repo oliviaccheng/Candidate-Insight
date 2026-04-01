@@ -13,6 +13,7 @@ def main():
         database=os.environ["DB_NAME"],
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASSWORD"]
+
     )
     crsr = connection.cursor()
 
@@ -32,10 +33,16 @@ def main():
 
     # Example insertions
     create_candidate(
-        "Bob Doe", "Independent", "?", "MN", "Minneapolis",
-        "This is a bio.", None, None, None,
+        "Tim Burchett", "Republican", "Knox", "TN", "TN 2nd",
+        "Fiscal conservative, posts selfies with AOC", None, None, None,
         crsr
     )
+    create_candidate(
+        "Michaela Barnett", "Democratic", "Knox", "TN", "TN 2nd",
+        "Environmental activist, scientist, and entrepreneur", None, None, None,
+        crsr
+    )
+
 
     #create_article(
     #    "Example Title", "This is the body of the article.", "example, test", crsr
