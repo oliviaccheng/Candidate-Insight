@@ -7,7 +7,7 @@ import base64
 import io
 import sqlite3
 
-# legiscan2.py -- sqlite edition of legiscan.py
+# legiscan.py -- sqlite edition of legiscan.py
 # way faster than crawling files every time
 #
 # first run: cache.sync() downloads all TN sessions and builds the db
@@ -254,6 +254,33 @@ class TNDatasetCache:
             CREATE INDEX IF NOT EXISTS idx_votes_rc      ON votes(roll_call_id);
             CREATE INDEX IF NOT EXISTS idx_people_name   ON people(name);
             CREATE INDEX IF NOT EXISTS idx_summaries_pid ON summaries(people_id);
+
+            CREATE TABLE IF NOT EXISTS candidates (
+                people_id    INTEGER PRIMARY KEY,
+                name         TEXT,
+                party        TEXT,
+                role         TEXT,
+                district     TEXT,
+                state_id     INTEGER,
+                bio          TEXT,
+                image_url    TEXT,
+                website      TEXT,
+                created_at   TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS candidate_articles (
+                id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                people_id    INTEGER,
+                title        TEXT,
+                url          TEXT,
+                date         TEXT,
+                excerpt      TEXT,
+                source       TEXT,
+                fetched_at   TEXT
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_candidates_name ON candidates(name);
+            CREATE INDEX IF NOT EXISTS idx_articles_pid    ON candidate_articles(people_id);
         """)
         conn.commit()
 
@@ -362,6 +389,13 @@ class TNDatasetCache:
                     total_votes += 1
 
         conn.commit()
+
+        # seed candidates table if empty
+        from candidates_db import seed_candidates_if_empty
+        conn.close()
+        seed_candidates_if_empty()
+        return
+    
         conn.close()
         print("  db build complete. %d votes written, %d junk roll calls filtered." % (
             total_votes, total_filtered))

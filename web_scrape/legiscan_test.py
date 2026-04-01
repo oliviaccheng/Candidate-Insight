@@ -1,16 +1,16 @@
 import sys
 import os
-from legiscan2 import LegiScanAPI, TNDatasetCache, find_person, get_voting_record, print_voting_record, summarize_candidate
+from legiscan import LegiScanAPI, TNDatasetCache, find_person, get_voting_record, print_voting_record, summarize_candidate
 
-# legiscan2_test.py -- tester for the sqlite edition
+# legiscan_test.py -- tester for the sqlite edition
 #
 # usage:
-#   python legiscan2_test.py --rebuild                      wipe and rebuild db from cache
-#   python legiscan2_test.py --sync                         download new sessions then rebuild
-#   python legiscan2_test.py --name Burchett                look up voting record by partial name
-#   python legiscan2_test.py --id 7295                      look up by people_id
-#   python legiscan2_test.py --name Burchett --summarize    generate topic summaries
-#   python legiscan2_test.py --name Burchett --summarize --refresh    force regenerate summaries
+#   python legiscan_test.py --rebuild                      wipe and rebuild db from cache
+#   python legiscan_test.py --sync                         download new sessions then rebuild
+#   python legiscan_test.py --name Burchett                look up voting record by partial name
+#   python legiscan_test.py --id 7295                      look up by people_id
+#   python legiscan_test.py --name Burchett --summarize    generate topic summaries
+#   python legiscan_test.py --name Burchett --summarize --refresh    force regenerate summaries
 
 LEGISCAN_KEY = "7f8c936ab721927831f92a5743c1d0ef"  # DO NOT SHAREEEEEEE 
 GROQ_KEY     = "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" # ALSO DO NOT SHARE!
@@ -73,8 +73,8 @@ if __name__ == "__main__":
     else:
         print("\ndb ready. run with --name or --id to look up a voting record.")
         print("examples:")
-        print("  python legiscan2_test.py --name Burchett")
-        print("  python legiscan2_test.py --name Burchett --summarize")
-        print("  python legiscan2_test.py --id 7295 --summarize --refresh")
+        print("  python legiscan_test.py --name Burchett")
+        print("  python legiscan_test.py --name Burchett --summarize")
+        print("  python legiscan_test.py --id 7295 --summarize --refresh")
 
     print("\ndone.")
