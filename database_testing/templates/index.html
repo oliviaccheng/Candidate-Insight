@@ -11,13 +11,6 @@
 </head>
 <body>
 
-<h2>Search Users</h2>
-
-<input type="text" id="searchInput" placeholder="Enter name or email">
-<button onclick="search()">Search</button>
-
-<div id="results"></div>
-
 <script>
 async function search() {
     const query = document.getElementById("searchInput").value.trim();
@@ -28,40 +21,89 @@ async function search() {
         return;
     }
 
+    let newstring = '';
+
     try {
-        // Fetch data from Flask backend
         const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
         const data = await res.json();
 
         const resultsDiv = document.getElementById("results");
-        resultsDiv.innerHTML = ""; // Clear previous results
+        resultsDiv.innerHTML = "";
 
         if (data.length === 0) {
             resultsDiv.innerHTML = "<p>No results found.</p>";
             return;
         }
 
-                // Loop through results and display them
-        data.forEach(candidate => {
-            const div = document.createElement("div");
-            div.className = "result";
+        // ✅ Only use the first (and only) candidate
+        const candidate = data[0];
 
-            div.innerHTML = `
-                <h3>${candidate.name}</h3>
-                <p><strong>Party:</strong> ${candidate.party}</p>
-                <p><strong>State:</strong> ${candidate.state}</p>
-                <p><strong>County:</strong> ${candidate.county}</p>
-                <p><strong>District:</strong> ${candidate.electoral_district}</p>
-                <p><strong>Bio:</strong> ${candidate.bio}</p>
-                <hr>
-            `;
+        const div = document.createElement("div");
+        div.className = "result";
 
-            resultsDiv.appendChild(div);
-        });
+        div.innerHTML = `
+            <h3>${candidate.name}</h3>
+            <p><strong>Party:</strong> ${candidate.party}</p>
+            <p><strong>State:</strong> ${candidate.state}</p>
+            <p><strong>County:</strong> ${candidate.county}</p>
+            <p><strong>District:</strong> ${candidate.electoral_district}</p>
+            <p><strong>Bio:</strong> ${candidate.bio}</p>
+        `;
+
+        resultsDiv.appendChild(div);
+
+        // Load tweets for this candidate
+        loadTweets(candidate.name);
 
     } catch (err) {
         console.error(err);
         document.getElementById("results").innerHTML = "<p>Error fetching results.</p>";
+    }
+    
+    loadTweets(newstring); // Load tweets after search
+}
+</script>
+
+<div style="display: flex; gap: 20px;">
+
+    <!-- LEFT: Search + Results -->
+    <div style="flex: 2;">
+        <h2>Search Candidates</h2>
+        <input type="text" id="searchInput">
+        <button onclick="search()">Search</button>
+
+        <div id="results"></div>
+    </div>
+
+    <!-- RIGHT: Tweet Feed -->
+    <div style="flex: 1; border-left: 1px solid #ccc; padding-left: 10px;">
+        <h3>Tweet Feed</h3>
+        <div id="tweets"></div>
+    </div>
+
+</div>
+<script>
+async function loadTweets(candidateName) {
+    try {
+        const res = await fetch(`/tweets?candidate=${encodeURIComponent(candidateName)}`);        const data = await res.json();
+
+        const tweetsDiv = document.getElementById("tweets");
+        tweetsDiv.innerHTML = "";
+
+        data.forEach(tweet => {
+            const div = document.createElement("div");
+            div.className = "tweet";
+
+            div.innerHTML = `
+                ${tweet.text}
+                <hr>
+            `;
+
+            tweetsDiv.appendChild(div);
+        });
+
+    } catch (err) {
+        console.error(err);
     }
 }
 </script>

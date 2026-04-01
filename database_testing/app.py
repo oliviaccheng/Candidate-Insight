@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 import psycopg2
+import csv
+import os
+
 
 app = Flask(__name__)
 
@@ -7,17 +10,28 @@ app = Flask(__name__)
 def get_conn():
     # Replace with your actual connection info
     return psycopg2.connect(
-        dbname="les_candidats",
-        user="neondb_owner",
-        password="npg_YzcNj0gG9hQs",
-        host="ep-cool-mode-ajyk5rlh-pooler.c-3.us-east-2.aws.neon.tech",
-        port="5432"
+        host=os.environ["DB_HOST"],
+        port=int(os.environ.get("DB_PORT", 5432)),
+        database=os.environ["DB_NAME"],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"]
+
     )
 
 # --- Serve the HTML page ---
 @app.route("/")
 def home():
     return render_template("index.html")
+
+def load_tweets(filename):
+    tweets = []
+    with open(filename, newline='', encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            tweets.append({
+                "text": row["text"]   # only grab the text column
+            })
+    return tweets
 
 # --- Search API ---
 @app.route("/search", methods=["GET"])
@@ -61,6 +75,43 @@ def search():
     except Exception as e:
         print("Error:", e)
         return jsonify({"error": "Server error"}), 500
+
+#@app.route("/tweets", methods=["GET"])
+#def get_tweets():
+    #try#:
+        candidate_name = request.args.get("candidate", "").strip()#
+
+#        tweets = load_tweets(candidate_name) 
+#        return jsonify(tweets[:20])  # limit to 20 tweets
+#    except Exception as e:
+#        print(e)
+#        return jsonify({"error": "Failed to load tweets"}), 500
+    
+
+@app.route("/tweets", methods=["GET"])
+def get_tweets():
+    try:
+        candidate_name = request.args.get("candidate", "").strip()
+
+        if not candidate_name:
+            return jsonify([])
+
+        # Use exact name + .csv
+        filename = f"{candidate_name}.csv"
+
+        print("Trying to load:", filename)  # debug
+
+        if not os.path.exists(filename):
+            print("File not found!")
+            return jsonify([])
+
+        tweets = load_tweets(filename)
+
+        return jsonify(tweets[:20])
+
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Failed to load tweets"}), 500
 
 # --- Run the app ---
 if __name__ == "__main__":
