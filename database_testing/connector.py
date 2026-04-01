@@ -1,9 +1,9 @@
 import os
 import psycopg2
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 # Load .env variables
-load_dotenv()
+#load_dotenv()
 
 def main():
     # Connect to DB
@@ -32,14 +32,14 @@ def main():
 
     # Example insertions
     create_candidate(
-        "John Doe", "Independent", "Hennepin", "MN", "Minneapolis",
-        "This is a bio.", "doeArticles.csv", "doeRecords.txt", "doeTweets.csv",
+        "Bob Doe", "Independent", "?", "MN", "Minneapolis",
+        "This is a bio.", None, None, None,
         crsr
     )
 
-    create_article(
-        "Example Title", "This is the body of the article.", "example, test", crsr
-    )
+    #create_article(
+    #    "Example Title", "This is the body of the article.", "example, test", crsr
+    #)
 
     connection.commit()
     crsr.close()

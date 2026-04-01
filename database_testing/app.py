@@ -32,7 +32,7 @@ def search():
         cur = conn.cursor()
 
         sql = """
-            SELECT id, bio, name 
+            SELECT name, party, state, county, electoral_district, bio
             FROM candidates
             WHERE name ILIKE %s
             LIMIT 20;
@@ -44,7 +44,18 @@ def search():
         cur.close()
         conn.close()
 
-        data = [{"id": r[0], "bio": r[1], "name": r[2]} for r in results]
+        data = [
+            {
+                "name": r[0],
+                "party": r[1],
+                "state": r[2],
+                "county": r[3],
+                "electoral_district": r[4],
+                "bio": r[5]
+            }
+            for r in results
+        ]        
+        
         return jsonify(data)
 
     except Exception as e:
