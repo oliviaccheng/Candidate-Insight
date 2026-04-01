@@ -43,6 +43,7 @@ async function search() {
 
         div.innerHTML = `
             <h3>${candidate.name}</h3>
+            <img src="${candidate.image}" alt="${candidate.name}" style="max-width:300px; display:block; margin-bottom:10px;">
             <p><strong>Party:</strong> ${candidate.party}</p>
             <p><strong>State:</strong> ${candidate.state}</p>
             <p><strong>County:</strong> ${candidate.county}</p>

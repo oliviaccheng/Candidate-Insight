@@ -15,7 +15,6 @@ def get_conn():
         database=os.environ["DB_NAME"],
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASSWORD"]
-
     )
 
 # --- Serve the HTML page ---
@@ -65,7 +64,8 @@ def search():
                 "state": r[2],
                 "county": r[3],
                 "electoral_district": r[4],
-                "bio": r[5]
+                "bio": r[5],
+                "image": f"/static/images/{r[0]}.jpg"
             }
             for r in results
         ]        
