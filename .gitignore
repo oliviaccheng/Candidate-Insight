@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+/legiscan_cache
 
 # next.js
 /.next/

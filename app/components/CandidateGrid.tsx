@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Users } from "lucide-react";
@@ -18,12 +18,6 @@ type Candidate = {
   image: string;
 };
 
-const defaultNames = [
-  "Michaela Barnett",
-  "Mike Davis",
-  "Tim Burchett",
-];
-
 function nameToSlug(name: string) {
   return name.toLowerCase().replaceAll(" ", "-");
 }
@@ -31,11 +25,8 @@ function nameToSlug(name: string) {
 export function CandidateGrid() {
   const [query, setQuery] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [defaultCandidates, setDefaultCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-
-  const displayCandidates = hasSearched ? candidates : defaultCandidates;
 
   const getPartyColor = (party: string) => {
     switch (party) {
@@ -50,29 +41,6 @@ export function CandidateGrid() {
         return "bg-gray-600 hover:bg-gray-700";
     }
   };
-  
-  useEffect(() => {
-    async function loadDefaults() {
-      try {
-        const results = await Promise.all(
-          defaultNames.map(async (name) => {
-            const res = await fetch(
-              `/api/search?q=${encodeURIComponent(name)}`,
-              { cache: "no-store" }
-            );
-            const data = await res.json();
-            return data[0];
-          })
-        );
-  
-        setDefaultCandidates(results.filter(Boolean));
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  
-    loadDefaults();
-  }, []);
 
   async function runSearch(searchTerm: string) {
     const trimmed = searchTerm.trim();
@@ -105,6 +73,7 @@ export function CandidateGrid() {
     }
   }
 
+  const displayCandidates = hasSearched ? candidates : [];
 
   return (
     <section className="py-16 bg-gray-50">
@@ -112,7 +81,7 @@ export function CandidateGrid() {
         <div className="flex items-center gap-3 mb-8">
           <Users className="w-8 h-8 text-blue-700" />
           <h2 className="text-3xl font-bold text-gray-900">
-              {hasSearched ? "Search Candidates" : "Featured Candidates"}
+            {hasSearched ? "Search Candidates" : "Enter a Name to Search"}
           </h2>
         </div>
 
@@ -132,9 +101,7 @@ export function CandidateGrid() {
           </button>
         </div>
 
-        {loading && (
-          <p className="text-gray-600 mb-6">Loading candidates...</p>
-        )}
+        {loading && <p className="text-gray-600 mb-6">Loading candidates...</p>}
 
         {!loading && hasSearched && candidates.length === 0 && (
           <p className="text-gray-600 mb-6">No candidates found.</p>

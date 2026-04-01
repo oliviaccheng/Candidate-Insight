@@ -1,18 +1,34 @@
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get("q") || "";
 
-  const res = await fetch(
-    `http://127.0.0.1:5000/search?q=${encodeURIComponent(q)}`,
-    { cache: "no-store" }
-  );
+  if (!q) return new Response(JSON.stringify([]), { status: 200 });
 
-  const text = await res.text();
+  try {
+    const db = await open({
+      filename: "legiscan_cache/legiscan.db",
+      driver: sqlite3.Database,
+    });
 
-  return new Response(text, {
-    status: res.status,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+    const candidates = await db.all(
+      `SELECT name, party, state_id, district
+       FROM candidates
+       WHERE name LIKE ? 
+       LIMIT 50`,
+      [`%${q}%`]
+    );
+
+    await db.close();
+
+    return new Response(JSON.stringify(candidates), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error(err);
+    return new Response(JSON.stringify([]), { status: 500 });
+  }
 }
