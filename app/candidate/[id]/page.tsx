@@ -145,7 +145,7 @@ export default function CandidateProfilePage() {
     platform: "X",
     type: "text",
     content: tweet.text,
-    timestamp: "Recent",
+    timestamp: "",
     likes: undefined,
     comments: undefined,
     shares: undefined,
@@ -221,7 +221,7 @@ export default function CandidateProfilePage() {
       <div className="relative h-96 bg-slate-900 overflow-hidden">
         {imageUrl ? (
           <img
-            src={imageUrl}
+            src="http://127.0.0.1:5000/static/images/profile_background.jpg"
             alt={candidate.name}
             className="w-full h-full object-cover opacity-30"
           />
@@ -414,7 +414,7 @@ export default function CandidateProfilePage() {
             ))}
           </TabsContent>
 
-          <TabsContent value="social" className="space-y-4">
+          <TabsContent value="social" className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {socialPosts.length === 0 ? (
               <Card>
                 <CardContent className="py-6">
@@ -424,7 +424,7 @@ export default function CandidateProfilePage() {
             ) : (
               socialPosts.map((post) => (
                 <Card key={post.id}>
-                  <CardHeader className="py-3">
+                  <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {post.platform === "X" && (

@@ -18,6 +18,12 @@ type Candidate = {
   image: string;
 };
 
+const defaultNames = [
+  "Michaela Barnett",
+  "Mike Davis",
+  "Tim Burchett",
+];
+
 function nameToSlug(name: string) {
   return name.toLowerCase().replaceAll(" ", "-");
 }
@@ -25,8 +31,11 @@ function nameToSlug(name: string) {
 export function CandidateGrid() {
   const [query, setQuery] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [defaultCandidates, setDefaultCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const displayCandidates = hasSearched ? candidates : defaultCandidates;
 
   const getPartyColor = (party: string) => {
     switch (party) {
@@ -41,6 +50,29 @@ export function CandidateGrid() {
         return "bg-gray-600 hover:bg-gray-700";
     }
   };
+  
+  useEffect(() => {
+    async function loadDefaults() {
+      try {
+        const results = await Promise.all(
+          defaultNames.map(async (name) => {
+            const res = await fetch(
+              `/api/search?q=${encodeURIComponent(name)}`,
+              { cache: "no-store" }
+            );
+            const data = await res.json();
+            return data[0];
+          })
+        );
+  
+        setDefaultCandidates(results.filter(Boolean));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  
+    loadDefaults();
+  }, []);
 
   async function runSearch(searchTerm: string) {
     const trimmed = searchTerm.trim();
@@ -73,16 +105,15 @@ export function CandidateGrid() {
     }
   }
 
-  useEffect(() => {
-    runSearch(query);
-  }, []);
 
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center gap-3 mb-8">
           <Users className="w-8 h-8 text-blue-700" />
-          <h2 className="text-3xl font-bold text-gray-900">Search Candidates</h2>
+          <h2 className="text-3xl font-bold text-gray-900">
+              {hasSearched ? "Search Candidates" : "Featured Candidates"}
+          </h2>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -110,7 +141,7 @@ export function CandidateGrid() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {candidates.map((candidate) => {
+          {displayCandidates.map((candidate) => {
             const slug = nameToSlug(candidate.name);
             const imageUrl =
               candidate.image && candidate.image.trim() !== ""
@@ -149,9 +180,6 @@ export function CandidateGrid() {
                   <CardContent>
                     <p className="text-sm font-semibold text-blue-700 mb-2">
                       {candidate.electoral_district}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {candidate.state}
                     </p>
                     <p className="text-sm text-gray-700 line-clamp-3">
                       {candidate.bio}
