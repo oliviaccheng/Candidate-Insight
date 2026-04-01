@@ -6,7 +6,7 @@ import { NewsSection } from "./components/NewsSection";
 export default function HomePage() {
   return (
     <main>
-      <FeaturedRaces />
+     {/*  <FeaturedRaces /> */}
       <CandidateGrid />
       <SocialFeed />
       <NewsSection />

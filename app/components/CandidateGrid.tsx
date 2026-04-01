@@ -1,65 +1,166 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Users } from "lucide-react";
+
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Users } from "lucide-react";
-import Link from "next/link"; // Changed from react-router-dom
-import Image from "next/image"; // Next.js Image optimization
 
-const candidates = [
-  {
-    id: 1,
-    name: "Sarah Mitchell",
-    party: "Democrat",
-    position: "Senate Candidate",
-    state: "California",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Minister_Mitchell_July_20_headshot_DSC6710a.jpg/500px-Minister_Mitchell_July_20_headshot_DSC6710a.jpg",
-    bio: "Former state legislator with 15 years of public service experience."
-  },
-  // ... other candidates
-];
+type Candidate = {
+  name: string;
+  party: string;
+  state: string;
+  county: string;
+  electoral_district: string;
+  bio: string;
+  image: string;
+};
+
+function nameToSlug(name: string) {
+  return name.toLowerCase().replaceAll(" ", "-");
+}
 
 export function CandidateGrid() {
+  const [query, setQuery] = useState("");
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
   const getPartyColor = (party: string) => {
-    switch(party) {
-      case "Democrat": return "bg-blue-600 hover:bg-blue-700";
-      case "Republican": return "bg-red-600 hover:bg-red-700";
-      case "Independent": return "bg-purple-600 hover:bg-purple-700";
-      default: return "bg-gray-600 hover:bg-gray-700";
+    switch (party) {
+      case "Democrat":
+      case "Democratic":
+        return "bg-blue-600 hover:bg-blue-700";
+      case "Republican":
+        return "bg-red-600 hover:bg-red-700";
+      case "Independent":
+        return "bg-purple-600 hover:bg-purple-700";
+      default:
+        return "bg-gray-600 hover:bg-gray-700";
     }
   };
+
+  async function runSearch(searchTerm: string) {
+    const trimmed = searchTerm.trim();
+
+    if (trimmed.length < 2) {
+      setCandidates([]);
+      setHasSearched(true);
+      return;
+    }
+
+    setLoading(true);
+    setHasSearched(true);
+
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch candidates");
+      }
+
+      const data = await res.json();
+      setCandidates(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Search error:", error);
+      setCandidates([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    runSearch(query);
+  }, []);
 
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center gap-3 mb-8">
           <Users className="w-8 h-8 text-blue-700" />
-          <h2 className="text-3xl font-bold text-gray-900">Featured Candidates</h2>
+          <h2 className="text-3xl font-bold text-gray-900">Search Candidates</h2>
         </div>
-        
+
+        <div className="flex flex-col sm:flex-row gap-3 mb-8">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Enter a candidate's name"
+            className="w-full sm:max-w-md rounded-md border border-gray-300 px-4 py-2 text-gray-900 bg-white"
+          />
+          <button
+            onClick={() => runSearch(query)}
+            className="rounded-md bg-blue-700 px-5 py-2 text-white hover:bg-blue-800 transition-colors"
+          >
+            Search
+          </button>
+        </div>
+
+        {loading && (
+          <p className="text-gray-600 mb-6">Loading candidates...</p>
+        )}
+
+        {!loading && hasSearched && candidates.length === 0 && (
+          <p className="text-gray-600 mb-6">No candidates found.</p>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {candidates.map((candidate) => (
-            <Link key={candidate.id} href={`/candidate/${candidate.id}`}>
-              <Card className="overflow-hidden h-full hover:shadow-lg transition-shadow border-2 border-gray-200 cursor-pointer">
-                <div className="relative h-64 bg-gray-200">
-                  <Image 
-                    src={candidate.image} 
-                    alt={candidate.name}
-                    fill
-                    className="object-cover object-[80%_20%]"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                  />
-                </div>
-                <CardHeader className="pb-3">
-                  <h3 className="text-xl font-bold text-gray-900">{candidate.name}</h3>
-                  <Badge className={getPartyColor(candidate.party)}>{candidate.party}</Badge>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-semibold text-blue-700 mb-2">{candidate.position}</p>
-                  <p className="text-sm text-gray-600 mb-2">{candidate.state}</p>
-                  <p className="text-sm text-gray-700 line-clamp-3">{candidate.bio}</p>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+          {candidates.map((candidate) => {
+            const slug = nameToSlug(candidate.name);
+            const imageUrl =
+              candidate.image && candidate.image.trim() !== ""
+                ? `http://127.0.0.1:5000${candidate.image}`
+                : null;
+
+            return (
+              <Link key={candidate.name} href={`/candidate/${slug}`}>
+                <Card className="overflow-hidden h-full hover:shadow-lg transition-shadow border-2 border-gray-200 cursor-pointer">
+                  <div className="relative h-64 bg-gray-200">
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt={candidate.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-gray-500 text-sm">
+                        No image available
+                      </div>
+                    )}
+                  </div>
+
+                  <CardHeader className="pb-3">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      {candidate.name}
+                    </h3>
+                    <Badge className={getPartyColor(candidate.party)}>
+                      {candidate.party}
+                    </Badge>
+                  </CardHeader>
+
+                  <CardContent>
+                    <p className="text-sm font-semibold text-blue-700 mb-2">
+                      {candidate.electoral_district}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {candidate.state}
+                    </p>
+                    <p className="text-sm text-gray-700 line-clamp-3">
+                      {candidate.bio}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

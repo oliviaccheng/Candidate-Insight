@@ -13,7 +13,7 @@ export function Header() {
           </Link>
         </div>
         
-        <nav className="flex justify-center flex gap-4 sm:gap-40 bg-slate-800 rounded-lg px-6 py-4 overflow-x-auto">
+{/*         <nav className="flex justify-center flex gap-4 sm:gap-40 bg-slate-800 rounded-lg px-6 py-4 overflow-x-auto">
           <Link href="/">
             <Button variant="ghost" className="text-white hover:text-blue-400 hover:bg-slate-700 whitespace-nowrap">
               Current Races
@@ -29,7 +29,7 @@ export function Header() {
               Compare Candidates
             </Button>
           </Link>
-        </nav>
+        </nav> */}
       </div>
     </header>
   );
