@@ -9,7 +9,7 @@ export default function HomePage() {
      {/*  <FeaturedRaces /> */}
       <CandidateGrid />
       <SocialFeed />
-      {/* <NewsSection /> */}
+      <NewsSection />
     </main>
   );
 }
