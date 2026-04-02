@@ -11,16 +11,40 @@ import { Badge } from "./ui/badge";
 type Candidate = {
   name: string;
   party: string;
-  state: string;
-  county: string;
-  electoral_district: string;
+  role: string;
+  district: string;
   bio: string;
-  image: string;
+  image_url: string | null;
 };
-
 function nameToSlug(name: string) {
   return name.toLowerCase().replaceAll(" ", "-");
 }
+const previewCandidates: Candidate[] = [
+  {
+    name: "Tim Burchett",
+    party: "Republican",
+    role: "Knox",
+    district: "TN 2nd",
+    bio: "Fiscal conservative and former businessman",
+    image_url: "/images/tim_burchett.jpg",
+  },
+  {
+    name: "Michaela Barnett",
+    party: "Democratic",
+    role: "Knox",
+    district: "TN 2nd",
+    bio: "Environmental activist, scientist, and entrepreneur",
+    image_url: "/images/m_barnett.jpg",
+  },
+  {
+    name: "Mike Davis",
+    party: "Republican",
+    role: "Knox",
+    district: "Knox County Sheriff",
+    bio: "Conservative candidate for sheriff with over 30 years of law enforcement experience.",
+    image_url: "/images/mike_davis.jpg",
+  },
+];
 
 export function CandidateGrid() {
   const [query, setQuery] = useState("");
@@ -101,6 +125,57 @@ export function CandidateGrid() {
           </button>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          {!hasSearched &&
+            previewCandidates.map((candidate) => {
+              const slug = nameToSlug(candidate.name);
+              const imageUrl =
+                candidate.image_url && candidate.image_url.trim() !== ""
+                  ? `${candidate.image_url}`
+                  : null;
+
+              return (
+                <Link key={candidate.name} href={`/candidate/${slug}`}>
+                  <Card className="overflow-hidden h-full hover:shadow-lg transition-shadow border-2 border-gray-200 cursor-pointer">
+                    <div className="relative h-64 bg-gray-200">
+                      {imageUrl ? (
+                        <Image
+                          src={imageUrl}
+                          alt={candidate.name}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-gray-500 text-sm">
+                          No image available
+                        </div>
+                      )}
+                    </div>
+
+                    <CardHeader className="pb-3">
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {candidate.name}
+                      </h3>
+                      <Badge className={getPartyColor(candidate.party)}>
+                        {candidate.party}
+                      </Badge>
+                    </CardHeader>
+
+                    <CardContent>
+                      <p className="text-sm font-semibold text-blue-700 mb-2">
+                        {candidate.district}
+                      </p>
+                      <p className="text-sm text-gray-700 line-clamp-3">
+                        {candidate.bio}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+        </div>
+
         {loading && <p className="text-gray-600 mb-6">Loading candidates...</p>}
 
         {!loading && hasSearched && candidates.length === 0 && (
@@ -111,8 +186,8 @@ export function CandidateGrid() {
           {displayCandidates.map((candidate) => {
             const slug = nameToSlug(candidate.name);
             const imageUrl =
-              candidate.image && candidate.image.trim() !== ""
-                ? `http://127.0.0.1:5000${candidate.image}`
+              candidate.image_url && candidate.image_url.trim() !== ""
+                ? `${candidate.image_url}`
                 : null;
 
             return (
@@ -123,10 +198,8 @@ export function CandidateGrid() {
                       <Image
                         src={imageUrl}
                         alt={candidate.name}
-                        fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                        unoptimized
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-gray-500 text-sm">
@@ -146,7 +219,7 @@ export function CandidateGrid() {
 
                   <CardContent>
                     <p className="text-sm font-semibold text-blue-700 mb-2">
-                      {candidate.electoral_district}
+                      {candidate.district}
                     </p>
                     <p className="text-sm text-gray-700 line-clamp-3">
                       {candidate.bio}
