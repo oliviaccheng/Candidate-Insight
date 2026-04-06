@@ -123,12 +123,12 @@ export function NewsSection() {
 
                 <CardHeader className="pb-3 flex-grow">
                   <div className="flex gap-2 mb-2 flex-wrap">
-                    <Badge variant="outline" className="border-blue-600 text-blue-600">
+{/*                     <Badge variant="outline" className="border-blue-600 text-blue-600">
                       {article.category}
-                    </Badge>
-                    <Badge variant="outline">
+                    </Badge> */}
+{/*                     <Badge variant="outline">
                       {article.candidateName}
-                    </Badge>
+                    </Badge> */}
                   </div>
 
                   <h3 className="font-bold text-gray-900 leading-tight mb-2">

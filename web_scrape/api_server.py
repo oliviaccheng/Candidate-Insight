@@ -4,7 +4,7 @@ from candidates_db import search_candidates, get_candidate_profile
 
 # api_server.py -- tiny flask server that serves candidate data to Next.js
 # run this alongside npm run dev
-# default port 5000
+# port 5001
 
 app = Flask(__name__)
 CORS(app)  # allow Next.js on port 3000 to call us
@@ -28,4 +28,4 @@ def profile(people_id):
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(port=5001, debug=True)
